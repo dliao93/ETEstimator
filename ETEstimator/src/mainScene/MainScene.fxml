@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import org.controlsfx.control.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.collections.*?>
+
+<AnchorPane id="AnchorPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mainScene.MainSceneController">
+    <children>
+        <TabPane prefHeight="700.0" prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <tabs>
+                <Tab text="Auto ET Calculation">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <WebView fx:id="sourceWebView" layoutX="566.0" layoutY="8.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="235.0" prefWidth="625.0" />
+                                <Button fx:id="loadMapButton" layoutX="394.0" layoutY="118.0" mnemonicParsing="false" onAction="#loadMap" text="Button" />
+                                <TextField fx:id="latText" layoutX="297.0" layoutY="14.0" text="51.508742" />
+                                <TextField fx:id="longText" layoutX="297.0" layoutY="65.0" text="-0.120850" />
+                                <Label layoutX="178.0" layoutY="18.0" text="Latitude" />
+                                <Label layoutX="178.0" layoutY="69.0" text="Longitude" />
+                                <WebView fx:id="destWebView" layoutX="566.0" layoutY="261.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="235.0" prefWidth="625.0" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Manual ET Calculation">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <GridPane fx:id="attributesGridPane" layoutX="57.0" layoutY="244.0" prefHeight="311.0" prefWidth="355.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Label fx:id="dateLabel" text="Date" />
+                                        <Label fx:id="airTempLabel" text="Air Temperature" GridPane.rowIndex="1" />
+                                        <Label fx:id="windSpeedLabel" text="Wind Speed" GridPane.rowIndex="2" />
+                                        <Label fx:id="relHumLabel" text="Relative Humidity" GridPane.rowIndex="3" />
+                                        <Label fx:id="pressureLabel" text="Pressure" GridPane.rowIndex="4" />
+                                        <Label fx:id="surTempLabel" text="Surface Temperature" GridPane.rowIndex="5" />
+                                        <Label fx:id="netRadLabel" text="Net Radiation" GridPane.rowIndex="6" />
+                                        <Label fx:id="soilHeatLabel" text="Soil Heat Flux" GridPane.rowIndex="7" />
+                                        <Label fx:id="ndviLabel" text="NDVI" GridPane.rowIndex="8" />
+                                        <Label fx:id="eviLabel" text="EVI" GridPane.rowIndex="9" />
+                                        <TextField fx:id="airTempText" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                        <TextField fx:id="windSpeedText" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                        <TextField fx:id="relHumText" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                        <TextField fx:id="pressureText" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                        <TextField fx:id="surTempText" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                        <TextField fx:id="netRadText" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                        <TextField fx:id="soilHeatText" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                        <TextField fx:id="ndviText" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                        <TextField fx:id="eviTExt" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                                        <DatePicker fx:id="dateSelector" prefHeight="0.0" prefWidth="145.0" GridPane.columnIndex="1" />
+                                        <Button fx:id="goButton" mnemonicParsing="false" onAction="#goButtonClicked" text="Go" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="11" />
+                                        <Label fx:id="etLabel" text="ET" GridPane.rowIndex="10">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font></Label>
+                                        <TextField fx:id="etText" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                              <CheckBox fx:id="dateCheck" mnemonicParsing="false" prefHeight="25.0" prefWidth="9.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+                              <CheckBox fx:id="airTempCheck" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                              <CheckBox fx:id="windSpeedCheck" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                              <CheckBox fx:id="relHumCheck" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                              <CheckBox fx:id="pressureCheck" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
+                              <CheckBox fx:id="surTempCheck" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+                              <CheckBox fx:id="netRadCheck" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="6" />
+                              <CheckBox fx:id="soilHeatCheck" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="7" />
+                              <CheckBox fx:id="ndviCheck" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="8" />
+                              <CheckBox fx:id="eviCheck" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="9" />
+                              <Label fx:id="etWarningLabel" text="Please enter ET value!" textFill="RED" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="10">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </Label>
+                                    </children>
+                                </GridPane>
+                                <WebView fx:id="autoSourceWebView" layoutX="500.0" layoutY="236.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="235.0" prefWidth="625.0" />
+                                <ComboBox fx:id="modeCombo" layoutX="55.0" layoutY="33.0" onAction="#selectMode" prefWidth="150.0" promptText="Mode">
+                                    <items>     
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:id="insert" fx:value="Insert New Instance" />
+                                            <String fx:id="estimate" fx:value="Estimate ET" />                                                         
+                                        </FXCollections>
+                                    </items>
+                                </ComboBox>
+                        <GridPane fx:id="modelGridPane" layoutX="54.0" layoutY="115.0" prefHeight="74.0" prefWidth="601.0">
+                          <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="ANN" />
+                              <Label text="SMO" GridPane.columnIndex="1" />
+                              <Label text="Gaussain Process" GridPane.columnIndex="2" />
+                              <Label prefHeight="19.0" prefWidth="158.0" text="Decision Tree" GridPane.columnIndex="3" />
+                              <CheckBox fx:id="annCheck" mnemonicParsing="false" GridPane.rowIndex="2" />
+                              <CheckBox fx:id="smoPolyCheck" mnemonicParsing="false" text="Poly kernel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <CheckBox fx:id="smoPukCheck" mnemonicParsing="false" text="Puk Kernel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <CheckBox fx:id="smoRbfCheck" mnemonicParsing="false" text="RBF kernel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <CheckBox fx:id="gpPolyCheck" mnemonicParsing="false" text="Poly kernel" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                              <CheckBox fx:id="gpPukCheck" mnemonicParsing="false" text="Puk kernel" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                              <CheckBox fx:id="gpRbfCheck" mnemonicParsing="false" text="RBF kernel" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                              <CheckBox fx:id="m5pCheck" mnemonicParsing="false" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                              <Label text="Multilayer Perceptron" GridPane.rowIndex="1" />
+                              <Label text="M5P" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                              <Label text="Linear Regression" GridPane.columnIndex="4" />
+                              <CheckBox fx:id="lrCheck" mnemonicParsing="false" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                        <Label fx:id="attributeCheckLabel" layoutX="357.0" layoutY="202.0" maxWidth="100.0" text="Use as attribute in creating model?" wrapText="true" />
+                        <Label layoutX="506.0" layoutY="219.0" text="Source Location" />
+                        <GridPane fx:id="resultsGridPane" layoutX="58.0" layoutY="579.0" prefHeight="65.0" prefWidth="345.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="Model Chosen" />
+                              <TextField fx:id="bestModelText" GridPane.columnIndex="1" />
+                              <Label text="Estimated ET (mm/h)" GridPane.rowIndex="1" />
+                              <TextField fx:id="estimatedETText" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Button fx:id="modelDetailsButton" mnemonicParsing="false" text="Details" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+                           </children>
+                        </GridPane>
+                        <GridPane fx:id="arffFileGirdPane" layoutX="245.0" layoutY="26.0" prefHeight="60.0" prefWidth="500.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label prefHeight="1.0" prefWidth="230.0" text="Please select location for temporary arff file" />
+                              <Label text="File location" GridPane.rowIndex="1" />
+                              <Button fx:id="selectarffLocationButton" mnemonicParsing="false" onAction="#selectArffLocation" text="Select" GridPane.columnIndex="1" GridPane.halignment="LEFT" />
+                              <TextField fx:id="arffFileLocationText" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                        <Label fx:id="selectClassifierLabel" layoutX="666.0" layoutY="115.0" text="Please select at least 1 classifier" textFill="#f80101" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</AnchorPane>

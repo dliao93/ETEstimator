@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="150.0" prefWidth="250.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="errorMessage.ErrWindowController">
+   <children>
+      <Label layoutX="26.0" prefHeight="37.0" prefWidth="199.0" text="Please enter a valid password">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="72.0" layoutY="57.0" prefHeight="37.0" prefWidth="112.0" text="Press OK to continue" />
+      <Label layoutX="82.0" layoutY="27.0" text=" or username!">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Button fx:id="errOkButton" layoutX="112.0" layoutY="104.0" mnemonicParsing="false" onAction="#closeErr" text="OK" />
+   </children>
+</AnchorPane>
