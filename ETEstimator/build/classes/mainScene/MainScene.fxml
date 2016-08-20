@@ -177,6 +177,8 @@
                            </children>
                         </GridPane>
                         <Label fx:id="selectClassifierLabel" layoutX="666.0" layoutY="115.0" text="Please select at least 1 classifier" textFill="#f80101" />
+                        <ProgressBar fx:id="etProgressBar" layoutX="357.0" layoutY="537.0" prefWidth="200.0" progress="0.0" />
+                        <ProgressIndicator fx:id="etProgressIndicator" layoutX="577.0" layoutY="535.0" progress="0.0" />
                             </children>
                         </AnchorPane>
                     </content>

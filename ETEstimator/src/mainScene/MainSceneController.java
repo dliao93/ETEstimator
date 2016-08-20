@@ -37,6 +37,8 @@ import javafx.stage.Stage;
 import netscape.javascript.JSObject;
 
 import backend.*;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 
 /**
  * FXML Controller class
@@ -153,10 +155,19 @@ public class MainSceneController implements Initializable {
     private CheckBox lrCheck;
 
     @FXML
+    private ComboBox indicatorCombo;
+
+    @FXML
     private TextField bestModelText;
 
     @FXML
     private Label selectClassifierLabel;
+
+    @FXML
+    private ProgressBar etProgressBar;
+
+    @FXML
+    private ProgressIndicator etProgressIndicator;
 
     /**
      * Initializes the controller class.
@@ -198,6 +209,8 @@ public class MainSceneController implements Initializable {
         arffFileLocationText.setDisable(true);
         etWarningLabel.setVisible(false);
         selectClassifierLabel.setVisible(false);
+        bestModelText.setDisable(true);
+        etText.setDisable(true);
 
     }
     @FXML
@@ -271,6 +284,7 @@ public class MainSceneController implements Initializable {
             selectClassifierLabel.setVisible(false);
 
         } else if (modeCombo.getSelectionModel().getSelectedIndex() == 1) {
+
             for (Node node : attributesGridPane.getChildren()) {
                 node.setDisable(true);
             }
@@ -288,6 +302,7 @@ public class MainSceneController implements Initializable {
             arffFileGirdPane.setVisible(true);
 
             selectClassifierLabel.setVisible(false);
+            bestModelText.setText("");
         }
     }
 
@@ -325,9 +340,14 @@ public class MainSceneController implements Initializable {
             }
         } //Chose Estimate ET
         else if (modeCombo.getSelectionModel().getSelectedIndex() == 1) {
+            String ModelName = "";
+            resultsGridPane.setVisible(false);
+            bestModelText.setText("");
             //Check that at least one classifier has been chosen
             boolean classifierChosen = false;
+            System.out.print("reached 1");
             for (Node node : modelGridPane.getChildren()) {
+
                 if (node instanceof CheckBox) {
                     CheckBox temp = (CheckBox) node;
                     if (temp.isSelected()) {
@@ -336,33 +356,45 @@ public class MainSceneController implements Initializable {
                     }
                 }
             }
+            System.out.print("reached 2");
             if (classifierChosen == false) {
                 selectClassifierLabel.setVisible(true);
                 return;
             }
+            System.out.print("reached 3");
             ArffBuilder AB = new ArffBuilder();
             EvaluationModel EM = new EvaluationModel();
             try {
                 ArrayList<Integer> AttributeIndex = new ArrayList<Integer>();
                 AttributeIndex.add(0); //not using id for generating model
+                System.out.print("reached 4");
+                int i = 1;
                 for (Node node : attributesGridPane.getChildren()) {
                     if (node instanceof CheckBox) {
                         CheckBox tempCheck = (CheckBox) node;
                         if (tempCheck.isSelected()) {
                             AttributeIndex.add(1);
+                            i++;
                         } else {
                             AttributeIndex.add(0);
                         }
                     }
                 }
+                AttributeIndex.add(1); //use ET
+                System.out.print("Length: " + AttributeIndex.size());
                 String FilePath = arffFileLocationText.getText();
-                AB.ArffCreate("seven_weather_ndvi_evi", "ARFFName", FilePath, AttributeIndex);
+                System.out.println(FilePath);
+                AB.ArffCreate("seven_weather_ndvi_evi", "ARFF", FilePath, AttributeIndex);
+
                 String ResultDB = "testResultcreate";
                 backend.DBConnect DB = new backend.DBConnect();
                 if (DB.checkTable("testResultcreate") == 1) {
                     DB.dropTable("testResultcreate");
                 }
-
+                DB.createResultDB(ResultDB, "ID", "Model", "ModelSetting", "RMSE", "R", "NSE", "NameofArff");
+                System.out.println("Table " + ResultDB + " establised");
+                EM.evaluation("MultiPerceptron", "seven_weather_ndvi_evi", ResultDB, FilePath + "ARFF.arff");
+                /*
                 if (annCheck.isSelected()) {
                     EM.evaluation("MultiPerceptron", "seven_weather_ndvi_evi", ResultDB, FilePath);
                 }
@@ -389,20 +421,26 @@ public class MainSceneController implements Initializable {
                 }
                 if (lrCheck.isSelected()) {
                     EM.evaluation("LR", "seven_weather_ndvi_evi", ResultDB, FilePath);
+                }*/
+
+                if (indicatorCombo.getSelectionModel().getSelectedIndex() == 0) {
+                    double RMSEValue = DB.getMinResult(ResultDB, "RMSE");
+                    ArrayList<Double> RMSEArray = new ArrayList<Double>();
+                    RMSEArray.add(RMSEValue);
+
+                    //get id of instance
+                    int IndexValue = DB.getIndexValue(ResultDB, "RMSE", "" + RMSEValue + "");
+                    ArrayList<Integer> ResultIndexArray = new ArrayList<Integer>();
+                    ResultIndexArray.add(IndexValue);
+                    //model Name
+                    ModelName = DB.getData(ResultDB, "ID", "" + IndexValue + "", "Model");
+                } else if (indicatorCombo.getSelectionModel().getSelectedIndex() == 1) {
+                    //do sth
+                }else if (indicatorCombo.getSelectionModel().getSelectedIndex() == 1){
+                    //do sth
                 }
-
-                double RMSEValue = DB.getMinResult(ResultDB, "RMSE");
-                ArrayList<Double> RMSEArray = new ArrayList<Double>();
-                RMSEArray.add(RMSEValue);
-
-                //get id of instance
-                int IndexValue = DB.getIndexValue(ResultDB, "RMSE", "" + RMSEValue + "");
-                ArrayList<Integer> ResultIndexArray = new ArrayList<Integer>();
-                ResultIndexArray.add(IndexValue);
-                //model Name
-                String ModelName = DB.getData(ResultDB, "ID", "" + IndexValue + "", "Model");
                 bestModelText.setText(ModelName);
-
+                resultsGridPane.setVisible(true);
             } catch (Exception ee) {
                 System.out.println(ee);
             }
@@ -425,7 +463,7 @@ public class MainSceneController implements Initializable {
                 } else {
                     node.setDisable(false);
                 }
-            }       
+            }
             for (Node node : modelGridPane.getChildren()) {
                 node.setDisable(false);
             }
@@ -434,7 +472,7 @@ public class MainSceneController implements Initializable {
             for (Node node : modelGridPane.getChildren()) {
                 node.setDisable(false);
             }
-            resultsGridPane.setVisible(true);
+
         }
 
     }
