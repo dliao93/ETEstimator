@@ -39,6 +39,7 @@ import netscape.javascript.JSObject;
 import backend.*;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
+import javafx.concurrent.Task;
 
 /**
  * FXML Controller class
@@ -110,6 +111,10 @@ public class MainSceneController implements Initializable {
     private Label attributeCheckLabel;
     @FXML
     private Label etWarningLabel;
+    @FXML
+    private Label indicatorWarningLabel;
+    @FXML
+    private Label indicatorLabel;
 
     @FXML
     private ComboBox modeCombo;
@@ -165,7 +170,6 @@ public class MainSceneController implements Initializable {
 
     @FXML
     private ProgressBar etProgressBar;
-
     @FXML
     private ProgressIndicator etProgressIndicator;
 
@@ -211,6 +215,9 @@ public class MainSceneController implements Initializable {
         selectClassifierLabel.setVisible(false);
         bestModelText.setDisable(true);
         etText.setDisable(true);
+        etProgressBar.setVisible(false);
+        etProgressIndicator.setVisible(false);
+        indicatorWarningLabel.setVisible(false);
 
     }
     @FXML
@@ -262,46 +269,41 @@ public class MainSceneController implements Initializable {
     //Handler selecting insert instance or estimate ET
     @FXML
     protected void selectMode(ActionEvent event) {
+
+        resultsGridPane.setVisible(false);
+        selectClassifierLabel.setVisible(false);
+        etProgressBar.setVisible(false);
+        etProgressIndicator.setVisible(false);
+        etWarningLabel.setVisible(false);
+        indicatorWarningLabel.setVisible(false);
+        attributeCheckLabel.setDisable(true);
+        for (Node node : modelGridPane.getChildren()) {
+            node.setDisable(true);
+        }
         //If selected insert instance
         if (modeCombo.getSelectionModel().getSelectedIndex() == 0) {
             //enable all controls in attributes grid pane
             for (Node node : attributesGridPane.getChildren()) {
                 if (node instanceof CheckBox) {
                     node.setDisable(true);
-                } else {
+                }else if (node.equals(indicatorLabel)){
+                    node.setDisable(true);                    
+                } else if (node.equals(indicatorCombo)){
+                    node.setDisable(true);
+                }
+                else {
                     node.setDisable(false);
                 }
             }
-            attributeCheckLabel.setDisable(true);
-
-            //disable all controls in model grid pane
-            for (Node node : modelGridPane.getChildren()) {
-                node.setDisable(true);
-            }
-
             arffFileGirdPane.setVisible(false);
-            resultsGridPane.setVisible(false);
-            selectClassifierLabel.setVisible(false);
-
+            //disable all controls in model grid pane
         } else if (modeCombo.getSelectionModel().getSelectedIndex() == 1) {
-
             for (Node node : attributesGridPane.getChildren()) {
                 node.setDisable(true);
             }
-
-            for (Node node : modelGridPane.getChildren()) {
-                node.setDisable(true);
-            }
-            attributeCheckLabel.setDisable(true);
-
-            resultsGridPane.setVisible(false);
             arffFileLocationText.setDisable(true);
-            etWarningLabel.setVisible(false);
             selectClassifierLabel.setVisible(false);
-
             arffFileGirdPane.setVisible(true);
-
-            selectClassifierLabel.setVisible(false);
             bestModelText.setText("");
         }
     }
@@ -333,19 +335,18 @@ public class MainSceneController implements Initializable {
                             attributesValues.add("NULL");
                         }
                     }
-
                 }
                 //insert instance to DB
                 DBC.insertARFFDB(tableName, id, attributesValues.get(0), attributesValues.get(1), attributesValues.get(2), attributesValues.get(3), attributesValues.get(4), attributesValues.get(5), attributesValues.get(6), attributesValues.get(7), attributesValues.get(8), attributesValues.get(9), attributesValues.get(10));
             }
         } //Chose Estimate ET
         else if (modeCombo.getSelectionModel().getSelectedIndex() == 1) {
-            String ModelName = "";
+            indicatorWarningLabel.setVisible(false);
+
             resultsGridPane.setVisible(false);
             bestModelText.setText("");
             //Check that at least one classifier has been chosen
             boolean classifierChosen = false;
-            System.out.print("reached 1");
             for (Node node : modelGridPane.getChildren()) {
 
                 if (node instanceof CheckBox) {
@@ -356,95 +357,150 @@ public class MainSceneController implements Initializable {
                     }
                 }
             }
-            System.out.print("reached 2");
             if (classifierChosen == false) {
                 selectClassifierLabel.setVisible(true);
                 return;
             }
-            System.out.print("reached 3");
-            ArffBuilder AB = new ArffBuilder();
-            EvaluationModel EM = new EvaluationModel();
-            try {
-                ArrayList<Integer> AttributeIndex = new ArrayList<Integer>();
-                AttributeIndex.add(0); //not using id for generating model
-                System.out.print("reached 4");
-                int i = 1;
-                for (Node node : attributesGridPane.getChildren()) {
-                    if (node instanceof CheckBox) {
-                        CheckBox tempCheck = (CheckBox) node;
-                        if (tempCheck.isSelected()) {
-                            AttributeIndex.add(1);
-                            i++;
-                        } else {
-                            AttributeIndex.add(0);
-                        }
-                    }
-                }
-                AttributeIndex.add(1); //use ET
-                System.out.print("Length: " + AttributeIndex.size());
-                String FilePath = arffFileLocationText.getText();
-                System.out.println(FilePath);
-                AB.ArffCreate("seven_weather_ndvi_evi", "ARFF", FilePath, AttributeIndex);
 
-                String ResultDB = "testResultcreate";
-                backend.DBConnect DB = new backend.DBConnect();
-                if (DB.checkTable("testResultcreate") == 1) {
-                    DB.dropTable("testResultcreate");
-                }
-                DB.createResultDB(ResultDB, "ID", "Model", "ModelSetting", "RMSE", "R", "NSE", "NameofArff");
-                System.out.println("Table " + ResultDB + " establised");
-                EM.evaluation("MultiPerceptron", "seven_weather_ndvi_evi", ResultDB, FilePath + "ARFF.arff");
-                /*
-                if (annCheck.isSelected()) {
-                    EM.evaluation("MultiPerceptron", "seven_weather_ndvi_evi", ResultDB, FilePath);
-                }
-                if (smoPolyCheck.isSelected()) {
-                    EM.evaluation("SMOregPoly", "seven_weather_ndvi_evi", ResultDB, FilePath);
-                }
-                if (smoPukCheck.isSelected()) {
-                    EM.evaluation("SMOregPuk", "seven_weather_ndvi_evi", ResultDB, FilePath);
-                }
-                if (smoRbfCheck.isSelected()) {
-                    EM.evaluation("SMOregRBF", "seven_weather_ndvi_evi", ResultDB, FilePath);
-                }
-                if (gpPolyCheck.isSelected()) {
-                    EM.evaluation("GPPoly", "seven_weather_ndvi_evi", ResultDB, FilePath);
-                }
-                if (gpPukCheck.isSelected()) {
-                    EM.evaluation("GPPuk", "seven_weather_ndvi_evi", ResultDB, FilePath);
-                }
-                if (gpRbfCheck.isSelected()) {
-                    EM.evaluation("GPRBF", "seven_weather_ndvi_evi", ResultDB, FilePath);
-                }
-                if (m5pCheck.isSelected()) {
-                    EM.evaluation("M5P", "seven_weather_ndvi_evi", ResultDB, FilePath);
-                }
-                if (lrCheck.isSelected()) {
-                    EM.evaluation("LR", "seven_weather_ndvi_evi", ResultDB, FilePath);
-                }*/
-
-                if (indicatorCombo.getSelectionModel().getSelectedIndex() == 0) {
-                    double RMSEValue = DB.getMinResult(ResultDB, "RMSE");
-                    ArrayList<Double> RMSEArray = new ArrayList<Double>();
-                    RMSEArray.add(RMSEValue);
-
-                    //get id of instance
-                    int IndexValue = DB.getIndexValue(ResultDB, "RMSE", "" + RMSEValue + "");
-                    ArrayList<Integer> ResultIndexArray = new ArrayList<Integer>();
-                    ResultIndexArray.add(IndexValue);
-                    //model Name
-                    ModelName = DB.getData(ResultDB, "ID", "" + IndexValue + "", "Model");
-                } else if (indicatorCombo.getSelectionModel().getSelectedIndex() == 1) {
-                    //do sth
-                }else if (indicatorCombo.getSelectionModel().getSelectedIndex() == 1){
-                    //do sth
-                }
-                bestModelText.setText(ModelName);
-                resultsGridPane.setVisible(true);
-            } catch (Exception ee) {
-                System.out.println(ee);
+            if (indicatorCombo.getSelectionModel().isEmpty()) {
+                indicatorWarningLabel.setVisible(true);
+                return;
             }
+            etProgressBar.setVisible(true);
+            etProgressIndicator.setVisible(true);
+            etProgressBar.setProgress(0.0f);
+            etProgressIndicator.setProgress(0.0f);
+
+            Task task = new Task<Void>() {
+                String ModelName = "";
+
+                @Override
+                public Void call() {
+
+                    ArffBuilder AB = new ArffBuilder();
+                    EvaluationModel EM = new EvaluationModel();
+
+                    try {
+                        ArrayList<Integer> AttributeIndex = new ArrayList<Integer>();
+                        AttributeIndex.add(0); //not using id for generating model
+                        int i = 1;
+                        for (Node node : attributesGridPane.getChildren()) {
+                            if (node instanceof CheckBox) {
+                                CheckBox tempCheck = (CheckBox) node;
+                                if (tempCheck.isSelected()) {
+                                    AttributeIndex.add(1);
+                                    i++;
+                                } else {
+                                    AttributeIndex.add(0);
+                                }
+                            }
+                        }
+                        AttributeIndex.add(1); //use ET
+                        System.out.print("Length: " + AttributeIndex.size());
+                        String FilePath = arffFileLocationText.getText() + "/";
+                        AB.ArffCreate("seven_weather_ndvi_evi", "ARFF", FilePath, AttributeIndex);
+
+                        String ResultDB = "testResultcreate";
+                        backend.DBConnect DB = new backend.DBConnect();
+                        if (DB.checkTable("testResultcreate") == 1) {
+                            DB.dropTable("testResultcreate");
+                        }
+                        DB.createResultDB(ResultDB, "ID", "Model", "ModelSetting", "RMSE", "R", "NSE", "NameofArff");
+                        System.out.println("Table " + ResultDB + " establised");
+                        //EM.evaluation("MultiPerceptron", "seven_weather_ndvi_evi", ResultDB, FilePath + "ARFF.arff");
+
+                        if (annCheck.isSelected()) {
+                            EM.evaluation("MultiPerceptron", "seven_weather_ndvi_evi", ResultDB, FilePath + "ARFF.arff");
+                        }
+                        updateProgress(1, 10);
+
+                        //   etProgressBar.setProgress(0.1f);
+                        // etProgressIndicator.setProgress(0.1f);
+                        if (smoPolyCheck.isSelected()) {
+                            EM.evaluation("SMOregPoly", "seven_weather_ndvi_evi", ResultDB, FilePath + "/ARFF.arff");
+                        }
+                        updateProgress(2, 10);
+                        //   etProgressBar.setProgress(0.2f);
+                        //  etProgressIndicator.setProgress(0.2f);
+                        if (smoPukCheck.isSelected()) {
+                            EM.evaluation("SMOregPuk", "seven_weather_ndvi_evi", ResultDB, FilePath + "/ARFF.arff");
+                        }
+                        updateProgress(3, 10);
+                        //  etProgressBar.setProgress(0.3f);
+                        //  etProgressIndicator.setProgress(0.3f);
+                        if (smoRbfCheck.isSelected()) {
+                            EM.evaluation("SMOregRBF", "seven_weather_ndvi_evi", ResultDB, FilePath + "/ARFF.arff");
+                        }
+                        updateProgress(4, 10);
+                        //  etProgressBar.setProgress(0.4f);
+                        //  etProgressIndicator.setProgress(0.4f);
+                        if (gpPolyCheck.isSelected()) {
+                            EM.evaluation("GPPoly", "seven_weather_ndvi_evi", ResultDB, FilePath + "/ARFF.arff");
+                        }
+                        updateProgress(5, 10);
+                        //  etProgressBar.setProgress(0.5f);
+                        // etProgressIndicator.setProgress(0.5f);
+                        if (gpPukCheck.isSelected()) {
+                            EM.evaluation("GPPuk", "seven_weather_ndvi_evi", ResultDB, FilePath + "/ARFF.arff");
+                        }
+                        updateProgress(6, 10);
+                        // etProgressBar.setProgress(0.6f);
+                        //etProgressIndicator.setProgress(0.6f);
+                        if (gpRbfCheck.isSelected()) {
+                            EM.evaluation("GPRBF", "seven_weather_ndvi_evi", ResultDB, FilePath + "/ARFF.arff");
+                        }
+                        updateProgress(7, 10);
+                        //etProgressBar.setProgress(0.7f);
+                        //etProgressIndicator.setProgress(0.7f);
+                        if (m5pCheck.isSelected()) {
+                            EM.evaluation("M5P", "seven_weather_ndvi_evi", ResultDB, FilePath + "/ARFF.arff");
+                        }
+                        updateProgress(8, 10);
+                        //etProgressBar.setProgress(0.8f);
+                        //etProgressIndicator.setProgress(0.8f);
+                        if (lrCheck.isSelected()) {
+                            EM.evaluation("LR", "seven_weather_ndvi_evi", ResultDB, FilePath + "/ARFF.arff");
+                        }
+                        updateProgress(9, 10);
+                        // etProgressBar.setProgress(0.9f);
+                        //  etProgressIndicator.setProgress(0.9f);
+
+                        if (indicatorCombo.getSelectionModel().getSelectedIndex() == 0) {
+                            System.out.println("Reached Selected RMSE");
+                            double RMSEValue = DB.getMinResult(ResultDB, "RMSE");
+                            ArrayList<Double> RMSEArray = new ArrayList<Double>();
+                            RMSEArray.add(RMSEValue);
+
+                            //get id of instance
+                            int IndexValue = DB.getIndexValue(ResultDB, "RMSE", "" + RMSEValue + "");
+                            ArrayList<Integer> ResultIndexArray = new ArrayList<Integer>();
+                            ResultIndexArray.add(IndexValue);
+                            //model Name
+                            ModelName = DB.getData(ResultDB, "ID", "" + IndexValue + "", "Model");
+                        } else if (indicatorCombo.getSelectionModel().getSelectedIndex() == 1) {
+                            //do sth
+                        } else if (indicatorCombo.getSelectionModel().getSelectedIndex() == 1) {
+                            //do sth
+                        }
+
+                    } catch (Exception ee) {
+                        System.out.println(ee);
+                    }
+                    updateProgress(10, 10);
+                    // etProgressBar.setProgress(1.0f);
+                    //etProgressIndicator.setProgress(1.0f);
+                    bestModelText.setText(ModelName);
+                    resultsGridPane.setVisible(true);
+                    return null;
+                }
+            };
+
+            etProgressBar.progressProperty().bind(task.progressProperty());
+            etProgressIndicator.progressProperty().bind(task.progressProperty());
+            new Thread(task).start();
+
         }
+
     }
 
     @FXML
@@ -453,7 +509,6 @@ public class MainSceneController implements Initializable {
         chooser.setTitle("arff path");
         File selectedDirectory = chooser.showDialog(((Node) (e.getSource())).getScene().getWindow());
         if (selectedDirectory != null) {
-
             arffFileLocationText.setText(selectedDirectory.getAbsolutePath());
             for (Node node : attributesGridPane.getChildren()) {
                 if (node.equals(etText)) {
